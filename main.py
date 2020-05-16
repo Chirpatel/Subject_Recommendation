@@ -1,3 +1,8 @@
+#########
+# To see the response of similar subject open url https://Subject-Recommendation.chir0313.repl.co   in new tab after clicking the start button.
+# It may take some time to install libraries
+#########
+
 
 import pandas as pd
 import numpy as np
@@ -121,36 +126,42 @@ def f(Subject_id,Ratings):
 
 
 def item2(s):
-    return dc.loc[dc['Subject ID']==s]['ID'].tolist()[0]
+		l=dc.loc[dc['Subject ID']==s]['ID'].tolist();
+		if(len(l)>0):
+			return l[0]
+		else:
+			return -1;
 def f1(subject,ratings,type):
-    [r1,r2]=f(str(item2(subject)),int(ratings))
-    l4=[]
-    for x,y in dc.iterrows():
-        l3=[]
-        l3.append(int(y[0]))
-        l3.append(str(y[1]))
-        l3.append(float(r1[int(y[0])-1][0]))
-        l3.append(float(r2[int(y[0])-1][1]))
-        l3.append(float(r2[int(y[0])-1][2]))
-        l3.append(float(r2[int(y[0])-1][3]))
-        l3.append(float(r1[int(y[0])-1][0]))
-        l3.append(float(r2[int(y[0])-1][4]))
-        l3.append(float(r1[int(y[0])-1][0])+float(r2[int(y[0])-1][4]))
-        l4.append(l3)
-    df = pd.DataFrame(l4, columns = ['ID', 'Subject','Score 1','Score 2','Score 3','Score 4',"Collabrative Score","Content Score","Total Score"])
-    if(type == 1):
-        df1=df.sort_values(by=["Content Score"],ascending=False)
-    elif(type == 3):
-        df1=df.sort_values(by=["Total Score"],ascending=False)
-    else:
-        df1=df.sort_values(by=["Collabrative Score"],ascending=False)
-    print(df1.iloc[0])
-    Subject = df1.iat[0,1]
-    Subjectname = item(df1.iat[0,0] )
-    if(Subject == subject):
-        Subject = df1.iat[1,1]
-        Subjectname = item(df1.iat[1,0] )
-    return Subject,Subjectname
+		if(item2(subject)==-1):
+			return "-1","-1";
+		[r1,r2]=f(str(item2(subject)),int(ratings))
+		l4=[]
+		for x,y in dc.iterrows():
+				l3=[]
+				l3.append(int(y[0]))
+				l3.append(str(y[1]))
+				l3.append(float(r1[int(y[0])-1][0]))
+				l3.append(float(r2[int(y[0])-1][1]))
+				l3.append(float(r2[int(y[0])-1][2]))
+				l3.append(float(r2[int(y[0])-1][3]))
+				l3.append(float(r1[int(y[0])-1][0]))
+				l3.append(float(r2[int(y[0])-1][4]))
+				l3.append(float(r1[int(y[0])-1][0])+float(r2[int(y[0])-1][4]))
+				l4.append(l3)
+		df = pd.DataFrame(l4, columns = ['ID', 'Subject','Score 1','Score 2','Score 3','Score 4',"Collabrative Score","Content Score","Total Score"])
+		if(type == 1):
+				df1=df.sort_values(by=["Content Score"],ascending=False)
+		elif(type == 3):
+				df1=df.sort_values(by=["Total Score"],ascending=False)
+		else:
+				df1=df.sort_values(by=["Collabrative Score"],ascending=False)
+		print(df1.iloc[0])
+		Subject = df1.iat[0,1]
+		Subjectname = item(df1.iat[0,0] )
+		if(Subject == subject):
+				Subject = df1.iat[1,1]
+				Subjectname = item(df1.iat[1,0] )
+		return Subject,Subjectname
 
 
 def recm(subject,ratings,type):
@@ -185,12 +196,14 @@ def base_page():
 def recommend1():
 		message = request.get_json(force=True)
 		print(message)
-		subjectcode,subjectname=recm(message['subjectid'],message['ratings'],1)
+		subjectcode,subjectname=recm(message['subjectid'],message['ratings'],message['type'])
 		response = {
 				'subjectname': str(subjectname),
 				'subjectcode': str(subjectcode)
+
 		}
-		print(response)
+		print("Recommendate:",response['subjectname'])
+		print("Response:",response)
 		return jsonify(response)
 
 
@@ -208,5 +221,3 @@ if __name__ == "__main__":  # Makes sure this is the main process
 
 
 
-
-#x = input("Press q to quit")
