@@ -1,0 +1,37 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Recommendation</title>
+</head>
+<body>
+
+    Subject Code: <input id="subject" type="text">
+		Ratings: <input id="ratings" type="text" placeholder='0'>
+    <button id="submit-button">Search</button>
+    <p>Similar Subject: <span id="recommendation"></span></p>
+
+    <img id="selected-image" src="" alt=""/>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" ></script>
+<script>
+
+$("#submit-button").click(function(event){
+    subjectid= document.getElementById('subject').value;
+		ratings= document.getElementById('ratings').value;
+		let message = {
+        subjectid:subjectid,
+				ratings:ratings
+    }
+    console.log(message);
+
+    $.post("https://Subject-Recommendation.chir0313.repl.co/",JSON.stringify(message), function(response){
+        $("#recommendation").text(response.subjectname+" ("+response.subjectcode+")");
+        console.log(response);
+    });
+});
+
+</script>
+
+
+</body>
+</html>
