@@ -180,7 +180,7 @@ from flask import Flask
 app = Flask(  # Create a flask app
 	__name__,
 	template_folder='templates',  # Name of html file folder
-	static_folder='static'  # Name of directory for static files
+	static_folder='syllabus'  # Name of directory for static files
 )
 
 ok_chars = string.ascii_letters + string.digits
@@ -191,6 +191,9 @@ def base_page():
 	return render_template(
 		'index.html',  # Template file path, starting from the templates folder. 
 	)
+@app.route('/<path:path>')
+def static_file(path):
+    return app.send_static_file(path)
 
 @app.route("/",methods=["POST"])
 def recommend1():

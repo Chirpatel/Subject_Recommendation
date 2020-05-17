@@ -33,7 +33,11 @@
   <button style="margin:10px;" id="submit-button" type="button" class="btn btn-primary mx-sm-3 mb-2">Search</button>
     </div>
     <p style="margin:10px;"  class="lead mx-sm-3 mb-2"><b>Similar Subject:</b> <span id="recommendation"></span></p>
-
+		  <div>
+    <a id="download-link" href="#">
+  <button style="margin:10px;visibility: hidden;" id="download-button" type="button" class="btn btn-primary mx-sm-3 mb-2" >Download Syllabus</button>
+    </a>
+    </div>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" ></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
@@ -51,13 +55,19 @@ $("#submit-button").click(function(event){
   //alert(flag);
     subjectid= document.getElementById('subject').value;
 		ratings= document.getElementById('ratings').value;
-		if (!Number.isInteger(ratings)){
-			ratings = 0;
-			}
-		if(ratings>5 or ratings<0){
+		if(!Number.isInteger(parseInt(ratings))){
+			hide();
 			alert("Rating should be between 0 to 5")
-		}else{
-			if(subjectid!=""){
+			
+		}
+		else{
+			ratings = parseInt(ratings);
+			if(ratings>5 || ratings<0){
+				hide();
+				alert("Rating should be between 0 to 5")
+				
+			}
+			else if(subjectid!=""){
 					let message = {
 							subjectid:subjectid,
 							ratings:ratings,
@@ -66,11 +76,15 @@ $("#submit-button").click(function(event){
 					console.log(message);
 				$.post("https://Subject-Recommendation.chir0313.repl.co/",JSON.stringify(message), function(response){
 					if(response.subjectname=="-1"){
+						hide();
 						alert("Subject name does not exist.");
-							$("#recommendation").text(" ")
+						
 					}else{
 						$("#recommendation").text(response.subjectname+" ("+response.subjectcode+")");
 						console.log(response);
+						document.getElementById("download-button").style.visibility = "visible";
+						document.getElementById("download-link").href = `/syllabus/${response.subjectcode}.pdf`;
+						
 					}
 				});
 			}else{
@@ -78,6 +92,12 @@ $("#submit-button").click(function(event){
 			}
 		}
 });
+
+function hide(){
+	document.getElementById("download-button").style.visibility = "hidden";
+	document.getElementById("download-link").href = `#`;
+	$("#recommendation").text(" ")
+}
 
 </script>
 
