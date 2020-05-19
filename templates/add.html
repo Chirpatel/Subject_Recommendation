@@ -1,0 +1,171 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subject Recommendation</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <style>
+    .slidecontainer {
+      width: 100%;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 10px;
+      border-radius: 5px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+
+    .slider:hover {
+      opacity: 1;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #4CAF50;
+      cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #4CAF50;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+	<nav class="navbar navbar-light bg-light">
+  <a href="/" class="navbar-brand">Subject Recommendation</a>
+	</nav>
+	<div style="margin-top:10px;">
+	<a href="/"><button  class=" mx-sm-3 mb-2 btn btn-outline-success my-2 my-sm-0" type="submit">Back</button></a>
+	</div>
+  <p style="margin:10px;" class="h1 mx-sm-3 mb-2">Add Subject</p>
+    </div>
+    <div style="margin:10px;" class="form-group mx-sm-3 mb-2">
+    <label for="exampleInputEmail1">Auth Key</label>
+    <input id="authkey" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    <small id="emailHelp" class="form-text text-muted">Enter Authentication Key (Optional)</small>
+  </div>
+	<div style="margin:10px;" class="form-group mx-sm-3 mb-2">
+    <label for="exampleInputEmail1">Subject Code</label>
+    <input id="subjectcode" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="ITE1001">
+    <small id="emailHelp" class="form-text text-muted">Enter Subject Code</small>
+  </div>
+    <div style="margin:10px;" class="form-group mx-sm-3 mb-2">
+    <label for="exampleInputEmail1">Subject Name</label>
+    <input id="subjectname" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Subject Name">
+    <small id="emailHelp" class="form-text text-muted">Enter Subject Name</small>
+  </div>
+	
+	<div style="margin:10px;" class="form-group mx-sm-3 mb-2">
+    <label for="exampleInputEmail1">Module Description</label>
+    <input id="subjectmodule" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    <small id="emailHelp" class="form-text text-muted">Enter Description of Modules</small>
+  </div>
+    <div style="margin:10px;" class="form-group mx-sm-3 mb-2">
+    <label for="exampleInputEmail1">SLO's</label>
+    <input id="subjectslo" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="SLO1 SLO2 SLO3">
+    <small id="emailHelp" class="form-text text-muted">Enter Student Learning Outcome</small>
+  </div>
+    <div style="margin:10px;" class="form-group mx-sm-3 mb-2">
+    <label for="exampleInputEmail1">Expected Outcome</label>
+    <input id="subjectoutcome" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    <small id="emailHelp" class="form-text text-muted">Enter Expected Outcome</small>
+  </div>
+  <div style="margin:10px;" class="form-group mx-sm-3 mb-2">
+    <label for="exampleInputEmail1">Enter the Initial Ratings of the Subject</label>
+    <div class="slidecontainer">
+      <input type="range" min="0" max="5" value="0" class="slider" id="Ratings">
+      <p>Ratings: <span id="demo1"></span></p>
+    </div>
+  </div>
+  </div>
+	
+  <div>
+    <button style="margin:10px;" id="add-button" type="button" class="btn btn-primary mx-sm-3 mb-2">Add</button>
+  </div>
+  <p style="margin:10px;" class="lead mx-sm-3 mb-2"><b>Status:</b> <span id="status"></span>
+
+
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+  <script>
+    var slider1 = document.getElementById("Ratings");
+    var output1 = document.getElementById("demo1");
+    output1.innerHTML = slider1.value;
+    slider1.oninput = function() {
+      output1.innerHTML = (this.value);
+    }
+
+    $("#add-button").click(function(event) {
+			hide();
+      //alert(flag);
+			authkey = document.getElementById('authkey').value;
+      subjectid = document.getElementById('subjectcode').value;
+			subjectname = document.getElementById('subjectname').value;
+			subjectmodule = document.getElementById('subjectmodule').value;
+			subjectslo = document.getElementById('subjectslo').value;
+			subjectoutcome = document.getElementById('subjectoutcome').value;
+      ratings = document.getElementById('Ratings').value;
+			if(authkey==""){
+				authkey=-1;
+			}
+
+      	if (subjectid == "") {
+				alert("Subject Code should not be empty.")
+				}else if(subjectname==""){
+					alert("Subejct Name should not be empty.")
+				}else if(subjectmodule==""){
+					alert("Subject Module should not be empty.")
+				}else if(subjectslo=""){
+					alert("Subject SLO's should not be empty.")
+				}else if(subjectoutcome==""){
+					alert("Subject Outcome should not be empty.")
+				}
+				else{
+          let message = {
+						authkey:authkey,
+            subjectcode: subjectid,
+						subjectname: subjectname,
+						subjectmodule: subjectmodule,
+						subjectsl0: subjectslo,
+						subjectoutcome: subjectoutcome,
+            ratings: ratings,
+          }
+          console.log(message);
+          $.post("https://Subject-Recommendation.chir0313.repl.co/add", JSON.stringify(message), function(response) {
+            if (response.status == "-1") {
+              hide();
+              alert("Subject name exist.");
+							$("#status").text("Error");
+            } else {
+							$("#status").text(response.status );
+							console.log(response);
+            }
+          });
+        }
+    });
+
+    function hide() {
+      $("#status").text(" ")
+    }
+  </script>
+
+</body>
+
+</html>
