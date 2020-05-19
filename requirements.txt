@@ -86,7 +86,6 @@ python-dateutil==2.8.1
 python-jsonrpc-server==0.3.4
 python-language-server==0.21.5
 pytz==2020.1
-pyxel @ git+https://github.com/amasad/pyxel@8bcc2266b2fbb65f72ad686952de3838971c136e
 PyYAML==5.3.1
 regex==2020.5.14
 replit==1.1.3
