@@ -6,12 +6,11 @@
 
 import pandas as pd
 import numpy as np
-from scipy import sparse
+
 from sklearn.metrics.pairwise import cosine_similarity
-dc = pd.read_csv("Subjects.csv")
-dc= dc[['ID','Subject ID']]
+
 def rate(Subject_id,Ratings):
-	ratings = pd.read_csv("Data1.csv",index_col=0)
+	ratings = pd.read_csv("Data.csv",index_col=0)
 	ratings=ratings.fillna(0)
 
 	def standardize(row):
@@ -34,42 +33,34 @@ def rate(Subject_id,Ratings):
 
 
 def item1(id):
-    return dc.loc[dc['ID']==id]['Subject'].tolist()[0]
+		dc = pd.read_csv("Subjects.csv")
+		dc= dc[['ID','Subject ID']]
+		return dc.loc[dc['ID']==id]['Subject'].tolist()[0]
 
 import csv
 from csv import writer
 def append_list_as_row( list_of_elem):
-    with open('Data1.csv', 'a+', newline='') as write_obj:
-        csv_writer = writer(write_obj)
-        csv_writer.writerow(list_of_elem)
+		with open('Data.csv', 'a+', newline='') as write_obj:
+				csv_writer = writer(write_obj)
+				csv_writer.writerow(list_of_elem)
+				
+def add(ID,index,value):
+		df = pd.read_csv("Data.csv")
+		df.at[int(ID)-1, str(index)] = value
+		df.to_csv("Data.csv", index=False)
 
-def add(index,value):
-    rows=[]
-    flag=0
-    num=0
-    with open('Data1.csv', 'r') as csv_file:
-        csv_reader = csv.reader(csv_file)
-        for row in csv_reader:
-            if row[index] in (None,'') and flag == 0:
-                flag=1
-                row[index]=str(value)
-            num+=1;
-            rows.append(row)
-    if(flag==0):
-        with open('Data1.csv', 'r') as csv_file:
-            csv_reader = csv.reader(csv_file)
-            col = len(next(csv_reader))
-        l = [''] * col
-        l[0] = str(num)
-        append_list_as_row(l)
-        return add(index,value)
-    return rows
-def func(index,value):
+def id():
+		df = pd.read_csv("Data.csv")
+		num = len(df)+1
+		l = [''] * len(df.columns)
+		l[0] = str(num)
+		append_list_as_row(l)
+		return l[0]
+
+def func(ID,index,value):
 		if(index!=-1):
-			rows = add(index,value)
-			with open('Data1.csv', 'w') as writeFile:
-					writer = csv.writer(writeFile)
-					writer.writerows(rows)
+				add(ID,index,value)
+
 
 
 def type1(Subject_id,Ratings):
@@ -87,43 +78,52 @@ def type1(Subject_id,Ratings):
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel 
-ds = pd.read_csv("Subjects.csv")
-tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 3), min_df=0, stop_words='english')
-ds['Modules']=ds['Modules'].str.replace("-", " ", case = False)
-tfidf_matrix = tf.fit_transform(ds['Modules'])
-cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix) 
-results1 = {}
 
-for idx, row in ds.iterrows():
+
+def subject():
+	ds = pd.read_csv("Subjects.csv")
+	tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 3), min_df=0, stop_words='english')
+	ds['Modules']=ds['Modules'].str.replace("-", " ", case = False)
+	tfidf_matrix = tf.fit_transform(ds['Modules'])
+	cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix) 
+	results1 = {}
+
+	for idx, row in ds.iterrows():
+			similar_indices = cosine_similarities[idx].argsort()[:-100:-1] 
+			similar_items = [[ds['ID'][i],cosine_similarities[idx][i]] for i in similar_indices] 
+			results1[row['ID']] = similar_items[1:]
+
+	tfidf_matrix = tf.fit_transform(ds['SLO'])
+	cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix) 
+	results2 = {}
+
+	for idx, row in ds.iterrows():
 		similar_indices = cosine_similarities[idx].argsort()[:-100:-1] 
 		similar_items = [[ds['ID'][i],cosine_similarities[idx][i]] for i in similar_indices] 
-		results1[row['ID']] = similar_items[1:]
+		results2[row['ID']] = similar_items[1:]
 
-tfidf_matrix = tf.fit_transform(ds['SLO'])
-cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix) 
-results2 = {}
+	tfidf_matrix = tf.fit_transform(ds['Expected Outcome'])
+	cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix) 
+	results3 = {}
 
-for idx, row in ds.iterrows():
-   similar_indices = cosine_similarities[idx].argsort()[:-100:-1] 
-   similar_items = [[ds['ID'][i],cosine_similarities[idx][i]] for i in similar_indices] 
-   results2[row['ID']] = similar_items[1:]
+	for idx, row in ds.iterrows():
+		similar_indices = cosine_similarities[idx].argsort()[:-100:-1] 
+		similar_items = [[ds['ID'][i],cosine_similarities[idx][i]] for i in similar_indices] 
+		results3[row['ID']] = similar_items[1:]
 
-tfidf_matrix = tf.fit_transform(ds['Expected Outcome'])
-cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix) 
-results3 = {}
-
-for idx, row in ds.iterrows():
-   similar_indices = cosine_similarities[idx].argsort()[:-100:-1] 
-   similar_items = [[ds['ID'][i],cosine_similarities[idx][i]] for i in similar_indices] 
-   results3[row['ID']] = similar_items[1:]
+	return results1,results2,results3;
 
 def item(id):  
-    return ds.loc[ds['ID']==id]['Subject Name'].tolist()[0]
+		ds = pd.read_csv("Subjects.csv")
+		return ds.loc[ds['ID']==id]['Subject Name'].tolist()[0]
 
 def item1(id):
-    return dc.loc[dc['ID']==id]['Subject ID'].tolist()[0]
+		dc = pd.read_csv("Subjects.csv")
+		dc= dc[['ID','Subject ID']]
+		return dc.loc[dc['ID']==id]['Subject ID'].tolist()[0]
 
 def recommend(item_id, num):  
+		results1,results2,results3 = subject()
 		recs1=results1[item_id][:]
 		recs1.sort()
 		recs2=results2[item_id][:]
@@ -144,28 +144,32 @@ def recommend(item_id, num):
 		return recs
 
 def type2(Subject_id):
-    return recommend(int(Subject_id), num=1)
+		return recommend(int(Subject_id), num=1)
 
 
 
 
 
 def f(Subject_id,Ratings):
-    r1=type1(Subject_id,Ratings)
-    r2=type2(Subject_id)
-    r2 = r2[0:int(Subject_id)-1]+[[int(Subject_id),0.0,0.0,0.0,0.0]]+r2[int(Subject_id)-1:]
+		r1=type1(Subject_id,Ratings)
+		r2=type2(Subject_id)
+		r2 = r2[0:int(Subject_id)-1]+[[int(Subject_id),0.0,0.0,0.0,0.0]]+r2[int(Subject_id)-1:]
 
-    return r1,r2
+		return r1,r2
 
 
 def item2(s):
 		#print(s)
+		dc = pd.read_csv("Subjects.csv")
+		dc= dc[['ID','Subject ID']]
 		l=dc.loc[dc['Subject ID']==s]['ID'].tolist();
 		if(len(l)>0):
 			return l[0]
 		else:
 			return -1;
 def f1(subject,ratings,type):
+		dc = pd.read_csv("Subjects.csv")
+		dc= dc[['ID','Subject ID']]
 		if(item2(subject)==-1):
 			return "-1","-1","-1";
 		[r1,r2]=f(str(item2(subject)),int(ratings))
@@ -212,9 +216,25 @@ def f1(subject,ratings,type):
 
 
 def recm(subject,ratings,type):
-    [r1,r2,p]=f1(str(subject).upper(),int(ratings),int(type))
-    return r1,r2,p
+		[r1,r2,p]=f1(str(subject).upper(),int(ratings),int(type))
+		return r1,r2,p
 
+
+def add_details(Subject_ID,Subject_Name,Modules,SLO,Expected_Outcome):
+		df = pd.read_csv("Data.csv")
+		columns = list(df.head(0))
+		ID = int(columns[-1])+1
+		df[ID] = ""
+		df.to_csv("Data.csv", index=False)
+		fields=[ID,Subject_ID,Subject_Name,Modules,SLO,Expected_Outcome]
+		with open('Subjects.csv', 'a') as f:
+				writer = csv.writer(f)
+				writer.writerow(fields)
+def add_details_csv(Subject_ID,Subject_Name,Modules,SLO,Expected_Outcome):
+		fields=[Subject_ID,Subject_Name,Modules,SLO,Expected_Outcome]
+		with open('add.csv', 'a') as f:
+				writer = csv.writer(f)
+				writer.writerow(fields)
 
 import string
 from flask import Flask, render_template, request, jsonify
@@ -237,7 +257,10 @@ def base_page():
 	return render_template(
 		'index.html',  # Template file path, starting from the templates folder. 
 	)
-
+@app.route('/id')  # What happens when the user visits the site
+def get_id():
+	new_id  = id()
+	return jsonify({'id':str(new_id)})
 @app.route('/add')  # What happens when the user visits the site
 def add_page():
 	return render_template(
@@ -246,7 +269,7 @@ def add_page():
 
 @app.route('/<path:path>')
 def static_file(path):
-    return app.send_static_file(path)
+		return app.send_static_file(path)
 
 
 @app.route("/",methods=["POST"])
@@ -254,7 +277,8 @@ def recommend1():
 		message = request.get_json(force=True)
 		print(message)
 		#print(item2(message['subjectid']))
-		func(item2(message['subjectid']),message['ratings'])
+		func(message['id'],item2(message['subjectid'].upper()),message['ratings'])
+		#func(item2(message['subjectid']),message['ratings'])
 		subjectcode,subjectname,percentage=recm(message['subjectid'],float(message['ratings']),message['type'])
 
 		response = {
@@ -270,10 +294,16 @@ def recommend1():
 def add_subject():
 		message = request.get_json(force=True)
 		print(message)
-
-		response = {
-				'status': "Added"
-		}
+		if(message['authkey']=="1234"):
+			add_details(message['subjectcode'].upper(),message["subjectname"],message["subjectmodule"],message["slo"],message["subjectoutcome"])
+			response = {
+					'status': "Added"
+			}
+		else:
+			add_details_csv(message['subjectcode'],message["subjectname"],message["subjectmodule"],message["slo"],message["subjectoutcome"])
+			response = {
+					'status': "Admin will add this subject!"
+			}
 		print("Response:",response)
 		return jsonify(response)		
 			
@@ -286,6 +316,7 @@ if __name__ == "__main__":  # Makes sure this is the main process
 		port=5000,  # Randomly select the port the machine hosts on.
 		threaded=False
 	)
+
 
 
 

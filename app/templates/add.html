@@ -132,7 +132,7 @@
 					alert("Subejct Name should not be empty.")
 				}else if(subjectmodule==""){
 					alert("Subject Module should not be empty.")
-				}else if(subjectslo=""){
+				}else if(subjectslo==""){
 					alert("Subject SLO's should not be empty.")
 				}else if(subjectoutcome==""){
 					alert("Subject Outcome should not be empty.")
@@ -143,12 +143,12 @@
             subjectcode: subjectid,
 						subjectname: subjectname,
 						subjectmodule: subjectmodule,
-						subjectsl0: subjectslo,
+						slo: subjectslo,
 						subjectoutcome: subjectoutcome,
             ratings: ratings,
           }
           console.log(message);
-          $.post("https://Subject-Recommendation.chir0313.repl.co/add", JSON.stringify(message), function(response) {
+          $.post(window.location.href, JSON.stringify(message), function(response) {
             if (response.status == "-1") {
               hide();
               alert("Subject name exist.");

@@ -99,7 +99,11 @@
     slider1.oninput = function() {
       output1.innerHTML = (this.value);
     }
-
+		var url = window.location.href
+		var id;
+		 $.get(url+"id", function(response) {
+			 id = response.id
+		 });
     $("#submit-button").click(function(event) {
 			hide();
 			if (document.getElementById('inlineRadio1').checked) {
@@ -114,12 +118,13 @@
 			console.log(subjectid);
       	if (subjectid != "") {
           let message = {
+						id: id,
             subjectid: subjectid,
             ratings: ratings,
             type: flag
           }
           console.log(message);
-          $.post("https://Subject-Recommendation.chir0313.repl.co/", JSON.stringify(message), function(response) {
+          $.post(url, JSON.stringify(message), function(response) {
             if (response.subjectname == "-1") {
               hide();
               alert("Subject name does not exist.");
